@@ -81,27 +81,29 @@ class SearchBar extends Component {
 
   onInputChange(event) {
     this.setState({ term: event.target.value });
-    console.log('this is the new state');
+    console.log(this.state.term, 'target value');
   }
 
   onFormSubmit(event) {
-    const { term } = this.state;
+    const { term, giphy } = this.state;
     event.preventDefault();
-    console.log(term, 'tweet awayyyy!');
+    console.log(term, 'search input field');
     client
-      .search('gifs', { q: term })
+      .search('gifs', { q: term, limit: 100 })
       .then(response => {
-        // console.log(response, 'search response')
+        console.log(response, 'search response')
         this.setState({ giphy: response.data });
-        console.log(this.state.giphy);
+        console.log(giphy);
       })
       .catch(error => {
         console.log(error);
       });
+      this.setState({ term: '' });
+     console.log(term, 'term...')
   }
 
   render() {
-    const { input, giphy } = this.state;
+    const { term, giphy } = this.state;
     const { classes } = this.props;
     return (
       <div className={classes.root}>
@@ -113,7 +115,7 @@ class SearchBar extends Component {
               color="inherit"
               noWrap
             >
-              who to giphy bomb?
+              what to giphy bomb?
             </Typography>
             <div className={classes.grow} />
             <div className={classes.search}>
@@ -127,14 +129,14 @@ class SearchBar extends Component {
                     root: classes.inputRoot,
                     input: classes.inputInput
                   }}
-                  value={input}
+                  value={term}
                   onChange={this.onInputChange}
                 />
               </form>
             </div>
           </Toolbar>
         </AppBar>
-        {giphy.length > 0 && <GiphyList searchResults={giphy} />}
+        {giphy.length > 0 && <GiphyList searchResults={giphy} searchInput={term} />}
       </div>
     );
   }
